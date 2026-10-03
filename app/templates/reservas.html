@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reservas</title>
+</head>
+
+<body>
+
+    <h1>Reservas</h1>
+
+    <form method="POST">
+
+        {{ formulario.hidden_tag() }}
+
+        {{ formulario.cliente_id.label }}
+        {{ formulario.cliente_id() }}
+
+        {% for error in formulario.cliente_id.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+
+
+        {{ formulario.habitacion_id.label }}
+        {{ formulario.habitacion_id() }}
+
+        {% for error in formulario.habitacion_id.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+
+
+        {{ formulario.fecha_entrada.label }}
+        {{ formulario.fecha_entrada() }}
+
+        {% for error in formulario.fecha_entrada.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+
+
+        {{ formulario.fecha_salida.label }}
+        {{ formulario.fecha_salida() }}
+
+        {% for error in formulario.fecha_salida.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+
+
+        {{ formulario.estado.label }}
+        {{ formulario.estado() }}
+
+        {% for error in formulario.estado.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+
+
+        {{ formulario.enviar() }}
+
+    </form>
+
+</body>
+
+</html>

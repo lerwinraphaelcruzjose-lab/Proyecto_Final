@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <h1>Clientes</h1>
+
+    <form method="POST">
+
+        {{ formulario.hidden_tag() }}
+
+        {{ formulario.nombre.label }}
+        {{ formulario.nombre() }}
+
+        {{ formulario.apellido.label }}
+        {{ formulario.apellido() }}
+
+        {{ formulario.id_documento.label }}
+        {{ formulario.id_documento() }}
+
+        {{ formulario.telefono.label }}
+        {{ formulario.telefono() }}
+
+        {{ formulario.correo.label }}
+        {{ formulario.correo() }}
+
+        {% for error in formulario.correo.errors %}
+            <p>
+                {{ error }}
+            </p>
+        {% endfor %}
+
+        {{ formulario.ciudad_residencia.label }}
+        {{ formulario.ciudad_residencia() }}
+
+        {{ formulario.pais_residencia.label }}
+        {{ formulario.pais_residencia() }}
+
+        {{ formulario.enviar() }}
+
+    </form>
+
+
+    {% for cliente in clientes %}
+
+        <div class="cliente">
+
+            <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+            <p><strong>Apellido:</strong> {{ cliente.apellido }}</p>
+            <p><strong>ID Documento:</strong> {{ cliente.id_documento }}</p>
+            <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+            <p><strong>Correo:</strong> {{ cliente.correo }}</p>
+            <p><strong>Ciudad:</strong> {{ cliente.ciudad_residencia }}</p>
+            <p><strong>País:</strong> {{ cliente.pais_residencia }}</p>
+            <p><strong>Fecha de registro:</strong> {{ cliente.fecha_registro }}</p>
+
+            <a href="/clientes/editar/{{ cliente.id }}">
+                Editar
+            </a>
+
+            <form method="POST" action="/clientes/eliminar/{{ cliente.id }}">
+
+                {{ formulario.hidden_tag() }}
+
+                <button type="submit">
+                    Eliminar
+                </button>
+
+            </form>
+
+        </div>
+
+    {% endfor %}
+
+</body>
+
+</html>

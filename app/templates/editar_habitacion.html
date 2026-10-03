@@ -1,0 +1,27 @@
+<form method="POST">
+
+    {{ formulario.hidden_tag() }}
+
+
+
+    <p>
+        {{ formulario.tipo_hab.label }}
+        {{ formulario.tipo_hab() }}
+    </p>
+
+    <p>
+        {{ formulario.precio_noche_hab.label }}
+        {{ formulario.precio_noche_hab() }}
+        
+    </p>
+
+    <p>
+        {{ formulario.estado_hab.label }}
+        {{ formulario.estado_hab() }}
+    </p>
+
+    <p>
+        {{ formulario.enviar() }}
+    </p>
+
+</form>

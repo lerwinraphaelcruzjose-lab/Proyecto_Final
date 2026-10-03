@@ -1,0 +1,38 @@
+.habitacion {
+    border: 2px solid black;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    background-color: lightgray;
+    color:darkblue;
+    font-size: 18px;
+    font-weight:bold;
+    text-align:center;
+    width: 300px;
+    box-shadow: 2px 2px 5px gray;
+}
+
+.habitacion strong{
+    color: black;
+}
+
+h1 {
+    text-align: center;
+    color: darkblue;
+    margin-bottom: 20px;
+}
+
+body {
+    font-family:Arial;
+    background-color: white;
+    padding: 20px;
+}
+
+a {
+    color: green;
+}
+
+.boton-eliminar {
+    background-color: red;
+    color: white;
+}

@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<h1>Habitaciones</h1>
+
+<form method="POST">
+
+    {{ formulario.hidden_tag() }}
+
+
+    <p>{{ formulario.numero_hab.label }}
+        {{ formulario.numero_hab()}}
+    </p>
+    
+
+    <p>{{ formulario.tipo_hab.label}}
+        {{ formulario.tipo_hab()}}
+    </p>
+
+    <p>{{ formulario.precio_noche_hab.label}}
+    {{ formulario.precio_noche_hab()}}
+    </p>
+
+    <p>{{ formulario.estado_hab.label}}
+    {{ formulario.estado_hab()}}</p>
+
+    <p>{{ formulario.enviar()}}</p>
+</form>
+
+
+{% for habitacion in habitaciones %}
+
+<div class="habitacion">
+
+    <p><strong>Numero:</strong> {{ habitacion.numero_hab }}</p>
+    <p><strong>Tipo:</strong> {{ habitacion.tipo_hab }}</p>
+    <p><strong>Precio:</strong> {{ habitacion.precio_noche_hab }}</p>
+    <p><strong>Estado:</strong> {{ habitacion.estado_hab }}</p>
+
+    <a href="/habitaciones/editar/{{ habitacion.id }}">
+        Editar
+    </a>
+
+    <form method="POST" action="/habitaciones/eliminar/{{ habitacion.id }}">
+
+        {{ formulario.hidden_tag() }}
+
+        <button type="submit" class="boton-eliminar">
+            Eliminar
+        </button>
+
+    </form>
+
+</div>
+
+{% endfor %}
+
+
+

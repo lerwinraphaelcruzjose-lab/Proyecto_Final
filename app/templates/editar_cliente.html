@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Cliente</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <h1>Editar Cliente</h1>
+
+    <form method="POST">
+
+        {{ formulario.hidden_tag() }}
+
+        {{ formulario.nombre.label }}
+        {{ formulario.nombre() }}
+
+        {{ formulario.apellido.label }}
+        {{ formulario.apellido() }}
+
+        {{ formulario.id_documento.label }}
+        {{ formulario.id_documento() }}
+
+        {{ formulario.telefono.label }}
+        {{ formulario.telefono() }}
+
+        {{ formulario.correo.label }}
+        {{ formulario.correo() }}
+
+        {% for error in formulario.correo.errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+
+        {{ formulario.ciudad_residencia.label }}
+        {{ formulario.ciudad_residencia() }}
+
+        {{ formulario.pais_residencia.label }}
+        {{ formulario.pais_residencia() }}
+
+        {{ formulario.enviar() }}
+
+    </form>
+
+    <p>
+        <a href="/clientes">Volver a Clientes</a>
+    </p>
+
+</body>
+
+</html>
