@@ -1,58 +1,167 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% extends "base.html" %}
 
-<h1>Habitaciones</h1>
+{% block title %}Gestión de Habitaciones{% endblock %}
 
-<form method="POST">
-
-    {{ formulario.hidden_tag() }}
-
-
-    <p>{{ formulario.numero_hab.label }}
-        {{ formulario.numero_hab()}}
-    </p>
-    
-
-    <p>{{ formulario.tipo_hab.label}}
-        {{ formulario.tipo_hab()}}
-    </p>
-
-    <p>{{ formulario.precio_noche_hab.label}}
-    {{ formulario.precio_noche_hab()}}
-    </p>
-
-    <p>{{ formulario.estado_hab.label}}
-    {{ formulario.estado_hab()}}</p>
-
-    <p>{{ formulario.enviar()}}</p>
-</form>
-
-
-{% for habitacion in habitaciones %}
-
-<div class="habitacion">
-
-    <p><strong>Numero:</strong> {{ habitacion.numero_hab }}</p>
-    <p><strong>Tipo:</strong> {{ habitacion.tipo_hab }}</p>
-    <p><strong>Precio:</strong> {{ habitacion.precio_noche_hab }}</p>
-    <p><strong>Estado:</strong> {{ habitacion.estado_hab }}</p>
-
-    <a href="/habitaciones/editar/{{ habitacion.id }}">
-        Editar
-    </a>
-
-    <form method="POST" action="/habitaciones/eliminar/{{ habitacion.id }}">
-
-        {{ formulario.hidden_tag() }}
-
-        <button type="submit" class="boton-eliminar">
-            Eliminar
-        </button>
-
-    </form>
-
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-door-open-fill text-primary me-2"></i>Gestión de Habitaciones
+        </h2>
+        <p class="text-muted mb-0">Registra y administra las habitaciones del hotel.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+            Total: {{ habitaciones|length }} habitaciones
+        </span>
+    </div>
 </div>
 
-{% endfor %}
+<div class="row g-4">
+    <!-- FORMULARIO CREAR HABITACIÓN -->
+    <div class="col-lg-4">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-plus-circle-fill text-primary"></i>
+                    <span>Registrar Habitación</span>
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
 
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.numero_hab.id }}">
+                            <i class="bi bi-hash text-muted me-1"></i>{{ formulario.numero_hab.label.text }}
+                        </label>
+                        {{ formulario.numero_hab(class="form-control" + (" is-invalid" if formulario.numero_hab.errors else ""), placeholder="Ej: 101") }}
+                        {% for error in formulario.numero_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.tipo_hab.id }}">
+                            <i class="bi bi-tag text-muted me-1"></i>{{ formulario.tipo_hab.label.text }}
+                        </label>
+                        {{ formulario.tipo_hab(class="form-select" + (" is-invalid" if formulario.tipo_hab.errors else "")) }}
+                        {% for error in formulario.tipo_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.precio_noche_hab.id }}">
+                            <i class="bi bi-currency-dollar text-muted me-1"></i>{{ formulario.precio_noche_hab.label.text }}
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            {{ formulario.precio_noche_hab(class="form-control" + (" is-invalid" if formulario.precio_noche_hab.errors else ""), placeholder="0.00", step="0.01") }}
+                        </div>
+                        {% for error in formulario.precio_noche_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="{{ formulario.estado_hab.id }}">
+                            <i class="bi bi-activity text-muted me-1"></i>{{ formulario.estado_hab.label.text }}
+                        </label>
+                        {{ formulario.estado_hab(class="form-select" + (" is-invalid" if formulario.estado_hab.errors else "")) }}
+                        {% for error in formulario.estado_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-hotel-primary">
+                            <i class="bi bi-save me-1"></i> Guardar Habitación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTADO DE HABITACIONES -->
+    <div class="col-lg-8">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-list-ul text-primary"></i>
+                    <span>Habitaciones Registradas</span>
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hotel align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Tipo</th>
+                                <th>Precio / Noche</th>
+                                <th>Estado</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if habitaciones %}
+                                {% for habitacion in habitaciones %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-dark-subtle text-dark border fs-6 px-2 py-1">
+                                            #{{ habitacion.numero_hab }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-door-closed text-muted me-1"></i>
+                                        <strong>{{ habitacion.tipo_hab }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-bold">${{ "%.2f"|format(habitacion.precio_noche_hab) }}</span>
+                                    </td>
+                                    <td>
+                                        {% set estado_class = habitacion.estado_hab|lower %}
+                                        <span class="badge badge-{{ estado_class }}">
+                                            {% if estado_class == 'disponible' %}
+                                                <i class="bi bi-check-circle me-1"></i>
+                                            {% elif estado_class == 'ocupada' %}
+                                                <i class="bi bi-x-circle me-1"></i>
+                                            {% else %}
+                                                <i class="bi bi-wrench me-1"></i>
+                                            {% endif %}
+                                            {{ habitacion.estado_hab }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('editar_habitacion', id=habitacion.id) }}" class="btn btn-outline-primary btn-sm" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('eliminar_habitacion', id=habitacion.id) }}" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar la habitación #{{ habitacion.numero_hab }}?');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-5">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                                        No hay habitaciones registradas. ¡Crea una con el formulario!
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

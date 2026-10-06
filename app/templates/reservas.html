@@ -1,63 +1,195 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Reservas</title>
-</head>
+{% block title %}Gestión de Reservas{% endblock %}
 
-<body>
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-calendar2-check-fill text-primary me-2"></i>Gestión de Reservas
+        </h2>
+        <p class="text-muted mb-0">Crea reservaciones, asigna habitaciones y supervisa estancias.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+            Total: {{ reservas|length if reservas is defined else 0 }} reservas
+        </span>
+    </div>
+</div>
 
-    <h1>Reservas</h1>
+<div class="row g-4">
+    <!-- FORMULARIO NUEVA RESERVA -->
+    <div class="col-lg-4">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar-plus-fill text-primary"></i>
+                    <span>Crear Reserva</span>
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
 
-    <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.cliente_id.id }}">
+                            <i class="bi bi-person text-muted me-1"></i>{{ formulario.cliente_id.label.text }}
+                        </label>
+                        {{ formulario.cliente_id(class="form-select" + (" is-invalid" if formulario.cliente_id.errors else "")) }}
+                        {% for error in formulario.cliente_id.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                        {% if not formulario.cliente_id.choices %}
+                            <small class="text-danger d-block mt-1">
+                                No hay clientes registrados. <a href="{{ url_for('clientes') }}">Registra uno primero</a>.
+                            </small>
+                        {% endif %}
+                    </div>
 
-        {{ formulario.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.habitacion_id.id }}">
+                            <i class="bi bi-door-open text-muted me-1"></i>{{ formulario.habitacion_id.label.text }}
+                        </label>
+                        {{ formulario.habitacion_id(class="form-select" + (" is-invalid" if formulario.habitacion_id.errors else "")) }}
+                        {% for error in formulario.habitacion_id.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                        {% if not formulario.habitacion_id.choices %}
+                            <small class="text-danger d-block mt-1">
+                                No hay habitaciones disponibles. <a href="{{ url_for('habitaciones') }}">Ver habitaciones</a>.
+                            </small>
+                        {% endif %}
+                    </div>
 
-        {{ formulario.cliente_id.label }}
-        {{ formulario.cliente_id() }}
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.fecha_entrada.id }}">
+                                <i class="bi bi-box-arrow-in-right text-muted me-1"></i>{{ formulario.fecha_entrada.label.text }}
+                            </label>
+                            {{ formulario.fecha_entrada(class="form-control" + (" is-invalid" if formulario.fecha_entrada.errors else "")) }}
+                            {% for error in formulario.fecha_entrada.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.fecha_salida.id }}">
+                                <i class="bi bi-box-arrow-right text-muted me-1"></i>{{ formulario.fecha_salida.label.text }}
+                            </label>
+                            {{ formulario.fecha_salida(class="form-control" + (" is-invalid" if formulario.fecha_salida.errors else "")) }}
+                            {% for error in formulario.fecha_salida.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        {% for error in formulario.cliente_id.errors %}
-            <p>{{ error }}</p>
-        {% endfor %}
+                    <div class="mb-4">
+                        <label class="form-label" for="{{ formulario.estado.id }}">
+                            <i class="bi bi-flag text-muted me-1"></i>{{ formulario.estado.label.text }}
+                        </label>
+                        {{ formulario.estado(class="form-select" + (" is-invalid" if formulario.estado.errors else "")) }}
+                        {% for error in formulario.estado.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-hotel-primary" {% if not formulario.cliente_id.choices or not formulario.habitacion_id.choices %}disabled{% endif %}>
+                            <i class="bi bi-calendar-check me-1"></i> Confirmar Reserva
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        {{ formulario.habitacion_id.label }}
-        {{ formulario.habitacion_id() }}
-
-        {% for error in formulario.habitacion_id.errors %}
-            <p>{{ error }}</p>
-        {% endfor %}
-
-
-        {{ formulario.fecha_entrada.label }}
-        {{ formulario.fecha_entrada() }}
-
-        {% for error in formulario.fecha_entrada.errors %}
-            <p>{{ error }}</p>
-        {% endfor %}
-
-
-        {{ formulario.fecha_salida.label }}
-        {{ formulario.fecha_salida() }}
-
-        {% for error in formulario.fecha_salida.errors %}
-            <p>{{ error }}</p>
-        {% endfor %}
-
-
-        {{ formulario.estado.label }}
-        {{ formulario.estado() }}
-
-        {% for error in formulario.estado.errors %}
-            <p>{{ error }}</p>
-        {% endfor %}
-
-
-        {{ formulario.enviar() }}
-
-    </form>
-
-</body>
-
-</html>
+    <!-- LISTADO DE RESERVAS -->
+    <div class="col-lg-8">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-journal-bookmark-fill text-primary"></i>
+                    <span>Historial de Reservas</span>
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hotel align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Habitación</th>
+                                <th>Estancia</th>
+                                <th>Estado</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if reservas %}
+                                {% for reserva in reservas %}
+                                <tr>
+                                    <td>
+                                        <span class="text-muted fw-bold">#{{ reserva.id }}</span>
+                                    </td>
+                                    <td>
+                                        {% if reserva.cliente %}
+                                            <strong>{{ reserva.cliente.nombre }} {{ reserva.cliente.apellido }}</strong>
+                                            <div class="small text-muted">
+                                                <i class="bi bi-card-text me-1"></i>{{ reserva.cliente.id_documento }}
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">Cliente no encontrado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if reserva.habitacion %}
+                                            <span class="badge bg-light text-dark border">
+                                                Hab. #{{ reserva.habitacion.numero_hab }}
+                                            </span>
+                                            <div class="small text-muted">{{ reserva.habitacion.tipo_hab }}</div>
+                                        {% else %}
+                                            <span class="text-muted">Hab. eliminada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <i class="bi bi-calendar-date text-muted me-1"></i>{{ reserva.fecha_entrada }} &rarr; {{ reserva.fecha_salida }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% set st = reserva.estado|lower %}
+                                        <span class="badge badge-{{ st }} text-capitalize">
+                                            {{ reserva.estado }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('editar_reserva', id=reserva.id) }}" class="btn btn-outline-primary btn-sm" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('eliminar_reserva', id=reserva.id) }}" class="d-inline" onsubmit="return confirm('¿Deseas eliminar la reserva #{{ reserva.id }}?');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="bi bi-calendar-x fs-1 d-block mb-2 text-secondary"></i>
+                                        No hay reservas registradas en el sistema.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

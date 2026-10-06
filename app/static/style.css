@@ -1,38 +1,254 @@
-.habitacion {
-    border: 2px solid black;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    background-color: lightgray;
-    color:darkblue;
-    font-size: 18px;
-    font-weight:bold;
-    text-align:center;
-    width: 300px;
-    box-shadow: 2px 2px 5px gray;
-}
+/* ==========================================================================
+   ESTILOS PERSONALIZADOS - SISTEMA DE GESTIÓN HOTELERA
+   ========================================================================== */
 
-.habitacion strong{
-    color: black;
-}
-
-h1 {
-    text-align: center;
-    color: darkblue;
-    margin-bottom: 20px;
+:root {
+    --hotel-primary: #1e3a8a;       /* Azul marino corporativo */
+    --hotel-primary-hover: #172554;
+    --hotel-secondary: #0d9488;     /* Verde azulado / Teal */
+    --hotel-accent: #f59e0b;        /* Ámbar / Dorado */
+    --hotel-dark: #0f172a;          /* Azul pizarra oscuro */
+    --hotel-bg: #f8fafc;            /* Fondo gris claro suave */
+    --hotel-card-bg: #ffffff;
+    --hotel-text-main: #1e293b;
+    --hotel-text-muted: #64748b;
+    --hotel-border: #e2e8f0;
 }
 
 body {
-    font-family:Arial;
-    background-color: white;
-    padding: 20px;
+    background-color: var(--hotel-bg);
+    color: var(--hotel-text-main);
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-a {
-    color: green;
+/* NAVBAR */
+.navbar-hotel {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    padding: 0.75rem 1rem;
 }
 
-.boton-eliminar {
-    background-color: red;
-    color: white;
+.navbar-hotel .navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #ffffff !important;
+    letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-hotel .nav-link {
+    color: #cbd5e1 !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navbar-hotel .nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-hotel .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+/* CARDS & PANELS */
+.card-hotel {
+    background-color: var(--hotel-card-bg);
+    border: 1px solid var(--hotel-border);
+    border-radius: 0.85rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hotel:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-hotel .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--hotel-border);
+    font-weight: 600;
+    color: var(--hotel-dark);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-hotel .card-header-auth {
+    display: flex;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* KPI CARDS (DASHBOARD) */
+.stat-card {
+    border-left: 4px solid var(--hotel-primary);
+    transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card.disponible { border-left-color: #10b981; }
+.stat-card.ocupada { border-left-color: #ef4444; }
+.stat-card.clientes { border-left-color: #3b82f6; }
+.stat-card.reservas { border-left-color: #8b5cf6; }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* BADGES ESTILIZADOS */
+.badge-disponible {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.badge-ocupada {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.badge-mantenimiento {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-pendiente {
+    background-color: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+.badge-confirmada {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.badge-cancelada {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.badge-completada {
+    background-color: #ccfbf1;
+    color: #0f766e;
+    border: 1px solid #99f6e4;
+}
+
+/* TABLAS */
+.table-hotel {
+    margin-bottom: 0;
+}
+
+.table-hotel thead th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--hotel-border);
+    padding: 0.85rem 1rem;
+}
+
+.table-hotel tbody td {
+    padding: 0.95rem 1rem;
+    vertical-align: middle;
+    color: var(--hotel-text-main);
+    border-bottom: 1px solid var(--hotel-border);
+    font-size: 0.92rem;
+}
+
+.table-hotel tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* BOTONES */
+.btn-hotel-primary {
+    background-color: var(--hotel-primary);
+    border-color: var(--hotel-primary);
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.15rem;
+    transition: all 0.2s ease;
+}
+
+.btn-hotel-primary:hover {
+    background-color: var(--hotel-primary-hover);
+    border-color: var(--hotel-primary-hover);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(30, 58, 138, 0.25);
+}
+
+.btn-sm-action {
+    padding: 0.28rem 0.55rem;
+    font-size: 0.82rem;
+    border-radius: 0.4rem;
+}
+
+/* FORMULARIOS */
+.form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--hotel-dark);
+    margin-bottom: 0.35rem;
+}
+
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #cbd5e1;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.92rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.invalid-feedback {
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+/* FOOTER */
+.footer-hotel {
+    margin-top: auto;
+    background-color: #ffffff;
+    border-top: 1px solid var(--hotel-border);
+    padding: 1.25rem 0;
+    color: var(--hotel-text-muted);
+    font-size: 0.875rem;
 }

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Reserva{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <!-- Navegación Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('reservas') }}">Reservas</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Editar Reserva #{{ reserva.id }}</li>
+            </ol>
+        </nav>
+
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-square text-primary"></i>
+                    <span>Editar Reserva #{{ reserva.id }}</span>
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.cliente_id.id }}">
+                            <i class="bi bi-person text-muted me-1"></i>{{ formulario.cliente_id.label.text }}
+                        </label>
+                        {{ formulario.cliente_id(class="form-select" + (" is-invalid" if formulario.cliente_id.errors else "")) }}
+                        {% for error in formulario.cliente_id.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.habitacion_id.id }}">
+                            <i class="bi bi-door-open text-muted me-1"></i>{{ formulario.habitacion_id.label.text }}
+                        </label>
+                        {{ formulario.habitacion_id(class="form-select" + (" is-invalid" if formulario.habitacion_id.errors else "")) }}
+                        {% for error in formulario.habitacion_id.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.fecha_entrada.id }}">
+                                <i class="bi bi-box-arrow-in-right text-muted me-1"></i>{{ formulario.fecha_entrada.label.text }}
+                            </label>
+                            {{ formulario.fecha_entrada(class="form-control" + (" is-invalid" if formulario.fecha_entrada.errors else "")) }}
+                            {% for error in formulario.fecha_entrada.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.fecha_salida.id }}">
+                                <i class="bi bi-box-arrow-right text-muted me-1"></i>{{ formulario.fecha_salida.label.text }}
+                            </label>
+                            {{ formulario.fecha_salida(class="form-control" + (" is-invalid" if formulario.fecha_salida.errors else "")) }}
+                            {% for error in formulario.fecha_salida.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="{{ formulario.estado.id }}">
+                            <i class="bi bi-flag text-muted me-1"></i>{{ formulario.estado.label.text }}
+                        </label>
+                        {{ formulario.estado(class="form-select" + (" is-invalid" if formulario.estado.errors else "")) }}
+                        {% for error in formulario.estado.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+                        <a href="{{ url_for('reservas') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Volver a Reservas
+                        </a>
+                        <button type="submit" class="btn btn-hotel-primary">
+                            <i class="bi bi-check-circle me-1"></i> Actualizar Reserva
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

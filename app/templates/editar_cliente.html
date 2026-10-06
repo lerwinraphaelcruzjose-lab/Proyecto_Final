@@ -1,54 +1,114 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Cliente</title>
+{% block title %}Editar Huésped{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
+        <!-- Navegación Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('clientes') }}">Clientes</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Editar Cliente</li>
+            </ol>
+        </nav>
 
-<body>
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-person-gear text-primary"></i>
+                    <span>Editar Datos del Huésped</span>
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
 
-    <h1>Editar Cliente</h1>
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.nombre.id }}">
+                                {{ formulario.nombre.label.text }}
+                            </label>
+                            {{ formulario.nombre(class="form-control" + (" is-invalid" if formulario.nombre.errors else "")) }}
+                            {% for error in formulario.nombre.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.apellido.id }}">
+                                {{ formulario.apellido.label.text }}
+                            </label>
+                            {{ formulario.apellido(class="form-control" + (" is-invalid" if formulario.apellido.errors else "")) }}
+                            {% for error in formulario.apellido.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-    <form method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.id_documento.id }}">
+                                <i class="bi bi-card-heading text-muted me-1"></i>{{ formulario.id_documento.label.text }}
+                            </label>
+                            {{ formulario.id_documento(class="form-control" + (" is-invalid" if formulario.id_documento.errors else "")) }}
+                            {% for error in formulario.id_documento.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.telefono.id }}">
+                                <i class="bi bi-telephone text-muted me-1"></i>{{ formulario.telefono.label.text }}
+                            </label>
+                            {{ formulario.telefono(class="form-control" + (" is-invalid" if formulario.telefono.errors else "")) }}
+                            {% for error in formulario.telefono.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        {{ formulario.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.correo.id }}">
+                            <i class="bi bi-envelope text-muted me-1"></i>{{ formulario.correo.label.text }}
+                        </label>
+                        {{ formulario.correo(class="form-control" + (" is-invalid" if formulario.correo.errors else ""), type="email") }}
+                        {% for error in formulario.correo.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-        {{ formulario.nombre.label }}
-        {{ formulario.nombre() }}
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.ciudad_residencia.id }}">
+                                <i class="bi bi-geo-alt text-muted me-1"></i>{{ formulario.ciudad_residencia.label.text }}
+                            </label>
+                            {{ formulario.ciudad_residencia(class="form-control" + (" is-invalid" if formulario.ciudad_residencia.errors else "")) }}
+                            {% for error in formulario.ciudad_residencia.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.pais_residencia.id }}">
+                                <i class="bi bi-globe text-muted me-1"></i>{{ formulario.pais_residencia.label.text }}
+                            </label>
+                            {{ formulario.pais_residencia(class="form-control" + (" is-invalid" if formulario.pais_residencia.errors else "")) }}
+                            {% for error in formulario.pais_residencia.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        {{ formulario.apellido.label }}
-        {{ formulario.apellido() }}
-
-        {{ formulario.id_documento.label }}
-        {{ formulario.id_documento() }}
-
-        {{ formulario.telefono.label }}
-        {{ formulario.telefono() }}
-
-        {{ formulario.correo.label }}
-        {{ formulario.correo() }}
-
-        {% for error in formulario.correo.errors %}
-            <p>{{ error }}</p>
-        {% endfor %}
-
-        {{ formulario.ciudad_residencia.label }}
-        {{ formulario.ciudad_residencia() }}
-
-        {{ formulario.pais_residencia.label }}
-        {{ formulario.pais_residencia() }}
-
-        {{ formulario.enviar() }}
-
-    </form>
-
-    <p>
-        <a href="/clientes">Volver a Clientes</a>
-    </p>
-
-</body>
-
-</html>
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+                        <a href="{{ url_for('clientes') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Volver a Clientes
+                        </a>
+                        <button type="submit" class="btn btn-hotel-primary">
+                            <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Cuenta{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header card-header-auth bg-white text-center py-3 border-0 d-flex flex-column align-items-center">
+                <div class="stat-icon bg-success-subtle text-success mb-2" style="width: 54px; height: 54px;">
+                    <i class="bi bi-person-plus-fill fs-3"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-1 w-100">Registro de Administrador</h4>
+                <p class="text-muted small mb-0 w-100">Crea tu cuenta de acceso para gestionar el hotel</p>
+            </div>
+            <div class="card-body p-4 pt-2">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.nombre_completo.id }}">
+                            <i class="bi bi-card-text text-muted me-1"></i>{{ formulario.nombre_completo.label.text }}
+                        </label>
+                        {{ formulario.nombre_completo(class="form-control" + (" is-invalid" if formulario.nombre_completo.errors else ""), placeholder="Ej: Jonathan Morales") }}
+                        {% for error in formulario.nombre_completo.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.username.id }}">
+                            <i class="bi bi-person text-muted me-1"></i>{{ formulario.username.label.text }}
+                        </label>
+                        {{ formulario.username(class="form-control" + (" is-invalid" if formulario.username.errors else ""), placeholder="Nombre de usuario único") }}
+                        {% for error in formulario.username.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.email.id }}">
+                            <i class="bi bi-envelope text-muted me-1"></i>{{ formulario.email.label.text }}
+                        </label>
+                        {{ formulario.email(class="form-control" + (" is-invalid" if formulario.email.errors else ""), placeholder="usuario@hotel.com", type="email") }}
+                        {% for error in formulario.email.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.password.id }}">
+                                <i class="bi bi-key text-muted me-1"></i>{{ formulario.password.label.text }}
+                            </label>
+                            {{ formulario.password(class="form-control" + (" is-invalid" if formulario.password.errors else ""), placeholder="Mínimo 6 caracteres") }}
+                            {% for error in formulario.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.confirm_password.id }}">
+                                <i class="bi bi-shield-check text-muted me-1"></i>{{ formulario.confirm_password.label.text }}
+                            </label>
+                            {{ formulario.confirm_password(class="form-control" + (" is-invalid" if formulario.confirm_password.errors else ""), placeholder="Repite contraseña") }}
+                            {% for error in formulario.confirm_password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-hotel-primary py-2">
+                            <i class="bi bi-check2-circle me-1"></i> Completar Registro
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center pt-2 border-top">
+                    <span class="small text-muted">¿Ya tienes cuenta?</span>
+                    <a href="{{ url_for('login') }}" class="small fw-semibold text-primary ms-1">
+                        Iniciar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,27 +1,84 @@
-<form method="POST">
+{% extends "base.html" %}
 
-    {{ formulario.hidden_tag() }}
+{% block title %}Editar Habitación{% endblock %}
 
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <!-- Navegación Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('habitaciones') }}">Habitaciones</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Editar Habitación</li>
+            </ol>
+        </nav>
 
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-square text-primary"></i>
+                    <span>Editar Habitación</span>
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
 
-    <p>
-        {{ formulario.tipo_hab.label }}
-        {{ formulario.tipo_hab() }}
-    </p>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.numero_hab.id }}">
+                            <i class="bi bi-hash text-muted me-1"></i>{{ formulario.numero_hab.label.text }}
+                        </label>
+                        {{ formulario.numero_hab(class="form-control" + (" is-invalid" if formulario.numero_hab.errors else "")) }}
+                        {% for error in formulario.numero_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-    <p>
-        {{ formulario.precio_noche_hab.label }}
-        {{ formulario.precio_noche_hab() }}
-        
-    </p>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.tipo_hab.id }}">
+                            <i class="bi bi-tag text-muted me-1"></i>{{ formulario.tipo_hab.label.text }}
+                        </label>
+                        {{ formulario.tipo_hab(class="form-select" + (" is-invalid" if formulario.tipo_hab.errors else "")) }}
+                        {% for error in formulario.tipo_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-    <p>
-        {{ formulario.estado_hab.label }}
-        {{ formulario.estado_hab() }}
-    </p>
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.precio_noche_hab.id }}">
+                            <i class="bi bi-currency-dollar text-muted me-1"></i>{{ formulario.precio_noche_hab.label.text }}
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            {{ formulario.precio_noche_hab(class="form-control" + (" is-invalid" if formulario.precio_noche_hab.errors else ""), step="0.01") }}
+                        </div>
+                        {% for error in formulario.precio_noche_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-    <p>
-        {{ formulario.enviar() }}
-    </p>
+                    <div class="mb-4">
+                        <label class="form-label" for="{{ formulario.estado_hab.id }}">
+                            <i class="bi bi-activity text-muted me-1"></i>{{ formulario.estado_hab.label.text }}
+                        </label>
+                        {{ formulario.estado_hab(class="form-select" + (" is-invalid" if formulario.estado_hab.errors else "")) }}
+                        {% for error in formulario.estado_hab.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-</form>
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+                        <a href="{{ url_for('habitaciones') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-hotel-primary">
+                            <i class="bi bi-check-circle me-1"></i> Actualizar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

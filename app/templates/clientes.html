@@ -1,84 +1,201 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Clientes</title>
+{% block title %}Gestión de Clientes{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-people-fill text-primary me-2"></i>Gestión de Clientes
+        </h2>
+        <p class="text-muted mb-0">Directorio de huéspedes y registro de nuevos clientes.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+            Total: {{ clientes|length }} huéspedes
+        </span>
+    </div>
+</div>
 
-<body>
+<div class="row g-4">
+    <!-- FORMULARIO NUEVO CLIENTE -->
+    <div class="col-lg-5">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-person-plus-fill text-primary"></i>
+                    <span>Registrar Huésped</span>
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ formulario.hidden_tag() }}
 
-    <h1>Clientes</h1>
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.nombre.id }}">
+                                {{ formulario.nombre.label.text }}
+                            </label>
+                            {{ formulario.nombre(class="form-control" + (" is-invalid" if formulario.nombre.errors else ""), placeholder="Ej: Juan") }}
+                            {% for error in formulario.nombre.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.apellido.id }}">
+                                {{ formulario.apellido.label.text }}
+                            </label>
+                            {{ formulario.apellido(class="form-control" + (" is-invalid" if formulario.apellido.errors else ""), placeholder="Ej: Pérez") }}
+                            {% for error in formulario.apellido.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-    <form method="POST">
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.id_documento.id }}">
+                                <i class="bi bi-card-heading text-muted me-1"></i>{{ formulario.id_documento.label.text }}
+                            </label>
+                            {{ formulario.id_documento(class="form-control" + (" is-invalid" if formulario.id_documento.errors else ""), placeholder="Ej: 402-1234567-8") }}
+                            {% for error in formulario.id_documento.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.telefono.id }}">
+                                <i class="bi bi-telephone text-muted me-1"></i>{{ formulario.telefono.label.text }}
+                            </label>
+                            {{ formulario.telefono(class="form-control" + (" is-invalid" if formulario.telefono.errors else ""), placeholder="Ej: 809-555-1234") }}
+                            {% for error in formulario.telefono.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        {{ formulario.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ formulario.correo.id }}">
+                            <i class="bi bi-envelope text-muted me-1"></i>{{ formulario.correo.label.text }}
+                        </label>
+                        {{ formulario.correo(class="form-control" + (" is-invalid" if formulario.correo.errors else ""), placeholder="correo@ejemplo.com", type="email") }}
+                        {% for error in formulario.correo.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
-        {{ formulario.nombre.label }}
-        {{ formulario.nombre() }}
+                    <div class="row g-2 mb-4">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.ciudad_residencia.id }}">
+                                <i class="bi bi-geo-alt text-muted me-1"></i>{{ formulario.ciudad_residencia.label.text }}
+                            </label>
+                            {{ formulario.ciudad_residencia(class="form-control" + (" is-invalid" if formulario.ciudad_residencia.errors else ""), placeholder="Ej: Santo Domingo") }}
+                            {% for error in formulario.ciudad_residencia.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="{{ formulario.pais_residencia.id }}">
+                                <i class="bi bi-globe text-muted me-1"></i>{{ formulario.pais_residencia.label.text }}
+                            </label>
+                            {{ formulario.pais_residencia(class="form-control" + (" is-invalid" if formulario.pais_residencia.errors else ""), placeholder="Ej: Rep. Dominicana") }}
+                            {% for error in formulario.pais_residencia.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        {{ formulario.apellido.label }}
-        {{ formulario.apellido() }}
-
-        {{ formulario.id_documento.label }}
-        {{ formulario.id_documento() }}
-
-        {{ formulario.telefono.label }}
-        {{ formulario.telefono() }}
-
-        {{ formulario.correo.label }}
-        {{ formulario.correo() }}
-
-        {% for error in formulario.correo.errors %}
-            <p>
-                {{ error }}
-            </p>
-        {% endfor %}
-
-        {{ formulario.ciudad_residencia.label }}
-        {{ formulario.ciudad_residencia() }}
-
-        {{ formulario.pais_residencia.label }}
-        {{ formulario.pais_residencia() }}
-
-        {{ formulario.enviar() }}
-
-    </form>
-
-
-    {% for cliente in clientes %}
-
-        <div class="cliente">
-
-            <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
-            <p><strong>Apellido:</strong> {{ cliente.apellido }}</p>
-            <p><strong>ID Documento:</strong> {{ cliente.id_documento }}</p>
-            <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
-            <p><strong>Correo:</strong> {{ cliente.correo }}</p>
-            <p><strong>Ciudad:</strong> {{ cliente.ciudad_residencia }}</p>
-            <p><strong>País:</strong> {{ cliente.pais_residencia }}</p>
-            <p><strong>Fecha de registro:</strong> {{ cliente.fecha_registro }}</p>
-
-            <a href="/clientes/editar/{{ cliente.id }}">
-                Editar
-            </a>
-
-            <form method="POST" action="/clientes/eliminar/{{ cliente.id }}">
-
-                {{ formulario.hidden_tag() }}
-
-                <button type="submit">
-                    Eliminar
-                </button>
-
-            </form>
-
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-hotel-primary">
+                            <i class="bi bi-person-check me-1"></i> Guardar Cliente
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
 
-    {% endfor %}
-
-</body>
-
-</html>
+    <!-- TABLA DE CLIENTES REGISTRADOS -->
+    <div class="col-lg-7">
+        <div class="card card-hotel shadow-sm">
+            <div class="card-header bg-white">
+                <span class="fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-card-list text-primary"></i>
+                    <span>Directorio de Clientes</span>
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hotel align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Huésped</th>
+                                <th>Identificación</th>
+                                <th>Contacto</th>
+                                <th>Ubicación</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if clientes %}
+                                {% for cliente in clientes %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                                                {{ cliente.nombre[:1] }}{{ cliente.apellido[:1] }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ cliente.nombre }} {{ cliente.apellido }}</div>
+                                                <span class="small text-muted">Reg: {{ cliente.fecha_registro }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            {{ cliente.id_documento }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <i class="bi bi-telephone text-muted me-1"></i>{{ cliente.telefono }}
+                                        </div>
+                                        <div class="small text-muted">
+                                            <i class="bi bi-envelope text-muted me-1"></i>{{ cliente.correo }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="small">
+                                            {{ cliente.ciudad_residencia or 'N/D' }}, {{ cliente.pais_residencia or '' }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('editar_cliente', id=cliente.id) }}" class="btn btn-outline-primary btn-sm" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('eliminar_cliente', id=cliente.id) }}" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar al cliente {{ cliente.nombre }} {{ cliente.apellido }}?');">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-5">
+                                        <i class="bi bi-people fs-1 d-block mb-2 text-secondary"></i>
+                                        No hay clientes registrados en el sistema.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

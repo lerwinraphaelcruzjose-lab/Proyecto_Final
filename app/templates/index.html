@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Control{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-speedometer2 text-primary me-2"></i>Panel de Control
+        </h2>
+        <p class="text-muted mb-0">Resumen operativo y estadísticas generales del hotel.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{{ url_for('reservas') }}" class="btn btn-hotel-primary shadow-sm">
+            <i class="bi bi-calendar-plus me-1"></i> Nueva Reserva
+        </a>
+    </div>
+</div>
+
+<!-- TARJETAS DE ESTADÍSTICAS / KPIS -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-hotel stat-card habitaciones h-100 p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Habitaciones</span>
+                    <h3 class="fw-bold my-1 text-dark">{{ total_habitaciones }}</h3>
+                    <span class="small text-muted">Capacidad instalada</span>
+                </div>
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-door-closed"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-hotel stat-card disponible h-100 p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Disponibles</span>
+                    <h3 class="fw-bold my-1 text-success">{{ habitaciones_disponibles }}</h3>
+                    <span class="small text-success fw-medium">Listas para reservar</span>
+                </div>
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-hotel stat-card clientes h-100 p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Clientes</span>
+                    <h3 class="fw-bold my-1 text-info">{{ total_clientes }}</h3>
+                    <span class="small text-muted">Huéspedes registrados</span>
+                </div>
+                <div class="stat-icon bg-info-subtle text-info">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card card-hotel stat-card reservas h-100 p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Reservas</span>
+                    <h3 class="fw-bold my-1 text-purple" style="color: #8b5cf6;">{{ total_reservas }}</h3>
+                    <span class="small text-muted">Historial de reservas</span>
+                </div>
+                <div class="stat-icon bg-purple-subtle text-purple" style="background-color: #ede9fe; color: #8b5cf6;">
+                    <i class="bi bi-calendar2-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ACCIONES RÁPIDAS Y SECCIONES -->
+<div class="row g-4 mb-4">
+    <!-- Habitaciones Disponibles -->
+    <div class="col-lg-6">
+        <div class="card card-hotel h-100">
+            <div class="card-header">
+                <span class="d-flex align-items-center gap-2">
+                    <i class="bi bi-door-open-fill text-success"></i>
+                    <span>Habitaciones Disponibles</span>
+                </span>
+                <a href="{{ url_for('habitaciones') }}" class="btn btn-sm btn-outline-secondary">
+                    Ver Todas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hotel align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>N° Habitación</th>
+                                <th>Tipo</th>
+                                <th>Precio / Noche</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if lista_disponibles %}
+                                {% for hab in lista_disponibles %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-light text-dark border fs-6">
+                                            #{{ hab.numero_hab }}
+                                        </span>
+                                    </td>
+                                    <td>{{ hab.tipo_hab }}</td>
+                                    <td><strong>${{ "%.2f"|format(hab.precio_noche_hab) }}</strong></td>
+                                    <td>
+                                        <a href="{{ url_for('editar_habitacion', id=hab.id) }}" class="btn btn-outline-primary btn-sm btn-sm-action">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-info-circle me-1"></i> No hay habitaciones disponibles en este momento.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimas Reservas -->
+    <div class="col-lg-6">
+        <div class="card card-hotel h-100">
+            <div class="card-header">
+                <span class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-primary"></i>
+                    <span>Últimas Reservas Registradas</span>
+                </span>
+                <a href="{{ url_for('reservas') }}" class="btn btn-sm btn-outline-secondary">
+                    Ver Todas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hotel align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Habitación</th>
+                                <th>Fechas</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if ultimas_reservas %}
+                                {% for res in ultimas_reservas %}
+                                <tr>
+                                    <td>
+                                        {% if res.cliente %}
+                                            <strong>{{ res.cliente.nombre }} {{ res.cliente.apellido }}</strong>
+                                        {% else %}
+                                            <span class="text-muted">N/D</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if res.habitacion %}
+                                            <span class="badge bg-light text-dark border">
+                                                Hab. {{ res.habitacion.numero_hab }} ({{ res.habitacion.tipo_hab }})
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">N/D</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="small">
+                                        {{ res.fecha_entrada }} &rarr; {{ res.fecha_salida }}
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-{{ res.estado|lower }} text-capitalize">
+                                            {{ res.estado }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-calendar-x me-1"></i> No se han registrado reservas aún.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
