@@ -1,3 +1,4 @@
+from datetime import date
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
@@ -331,7 +332,7 @@ def reservas():
         for cliente in clientes
     ]
 
-    habitaciones = Habitacion.query.filter_by(estado_hab="Disponible").order_by(Habitacion.numero_hab.asc()).all()
+    habitaciones = Habitacion.query.filter(Habitacion.estado_hab.in_(["Disponible","Ocupada"])).order_by(Habitacion.numero_hab.asc()).all()
     formulario.habitacion_id.choices = [
         (hab.id, f"Hab. #{hab.numero_hab} ({hab.tipo_hab}) - ${hab.precio_noche_hab:.2f}/noche")
         for hab in habitaciones
@@ -341,6 +342,21 @@ def reservas():
         if not current_user.is_authenticated:
             flash("Debes iniciar sesión para generar reservaciones.", "warning")
             return redirect(url_for("login", next=request.url))
+
+
+        reserva_existente = Reserva.query.filter(
+            Reserva.habitacion_id == formulario.habitacion_id.data,
+            Reserva.estado.in_(["pendiente", "confirmada"]),
+            Reserva.fecha_entrada < formulario.fecha_salida.data,
+            Reserva.fecha_salida > formulario.fecha_entrada.data
+        ).first()
+
+        if reserva_existente is not None:
+            flash(
+                "La habitación ya está reservada para esas fechas.",
+                "danger"
+            )
+            return redirect(url_for("reservas"))
 
         nueva_reserva = Reserva(
             cliente_id=formulario.cliente_id.data,
@@ -365,50 +381,108 @@ def reservas():
     return render_template("reservas.html", formulario=formulario, reservas=lista_reservas)
 
 
+
 @aplicacion.route("/reservas/editar/<int:id>", methods=["GET", "POST"])
 @login_required
 def editar_reserva(id):
     """
-    Permite modificar los detalles de una reserva existente. Protegida con autenticación.
+    Permite modificar una reserva existente,
+    evitando fechas pasadas y conflictos de fechas.
     """
     reserva = Reserva.query.get_or_404(id)
     formulario = ReservaForm(obj=reserva)
 
     clientes = Cliente.query.order_by(Cliente.nombre.asc()).all()
     formulario.cliente_id.choices = [
-        (cliente.id, f"{cliente.nombre} {cliente.apellido} - Doc: {cliente.id_documento}")
+        (
+            cliente.id,
+            f"{cliente.nombre} {cliente.apellido} - Doc: {cliente.id_documento}"
+        )
         for cliente in clientes
     ]
 
     habitaciones = Habitacion.query.filter(
-        (Habitacion.estado_hab == "Disponible") | (Habitacion.id == reserva.habitacion_id)
+        Habitacion.estado_hab.in_(["Disponible", "Ocupada"]),
+        Habitacion.id != None
     ).order_by(Habitacion.numero_hab.asc()).all()
 
     formulario.habitacion_id.choices = [
-        (hab.id, f"Hab. #{hab.numero_hab} ({hab.tipo_hab}) - ${hab.precio_noche_hab:.2f}/noche")
+        (
+            hab.id,
+            f"Hab. #{hab.numero_hab} ({hab.tipo_hab}) - "
+            f"${hab.precio_noche_hab:.2f}/noche"
+        )
         for hab in habitaciones
     ]
 
     if formulario.validate_on_submit():
-        hab_anterior = Habitacion.query.get(reserva.habitacion_id)
-        nueva_hab = Habitacion.query.get(formulario.habitacion_id.data)
 
+        # 1. Impedir fechas de entrada anteriores a hoy
+        if formulario.fecha_entrada.data < date.today():
+            flash(
+                "La fecha de entrada no puede ser anterior a hoy.",
+                "danger"
+            )
+            return render_template(
+                "editar_reserva.html",
+                formulario=formulario,
+                reserva=reserva
+            )
+
+        # 2. La salida debe ser posterior a la entrada
+        if formulario.fecha_salida.data <= formulario.fecha_entrada.data:
+            flash(
+                "La fecha de salida debe ser posterior a la fecha de entrada.",
+                "danger"
+            )
+            return render_template(
+                "editar_reserva.html",
+                formulario=formulario,
+                reserva=reserva
+            )
+
+        # 3. Buscar conflictos con otras reservas
+        reserva_existente = Reserva.query.filter(
+            Reserva.habitacion_id == formulario.habitacion_id.data,
+            Reserva.id != reserva.id,
+            Reserva.estado.in_(["pendiente", "confirmada"]),
+            Reserva.fecha_entrada < formulario.fecha_salida.data,
+            Reserva.fecha_salida > formulario.fecha_entrada.data
+        ).first()
+
+        if reserva_existente is not None:
+            flash(
+                "La habitación ya está reservada para esas fechas.",
+                "danger"
+            )
+            return render_template(
+                "editar_reserva.html",
+                formulario=formulario,
+                reserva=reserva
+            )
+
+        # 4. Actualizar los datos de la reserva
         reserva.cliente_id = formulario.cliente_id.data
         reserva.habitacion_id = formulario.habitacion_id.data
         reserva.fecha_entrada = formulario.fecha_entrada.data
         reserva.fecha_salida = formulario.fecha_salida.data
         reserva.estado = formulario.estado.data
 
-        if formulario.estado.data in ["cancelada", "completada"] and hab_anterior:
-            hab_anterior.estado_hab = "Disponible"
-        elif formulario.estado.data == "confirmada" and nueva_hab:
-            nueva_hab.estado_hab = "Ocupada"
-
+        # 5. Guardar los cambios
         database.session.commit()
-        flash(f"Reserva #{reserva.id} actualizada correctamente.", "success")
+
+        flash(
+            f"Reserva #{reserva.id} actualizada correctamente.",
+            "success"
+        )
         return redirect(url_for("reservas"))
 
-    return render_template("editar_reserva.html", formulario=formulario, reserva=reserva)
+    return render_template(
+        "editar_reserva.html",
+        formulario=formulario,
+        reserva=reserva
+    )
+
 
 
 @aplicacion.route("/reservas/eliminar/<int:id>", methods=["POST"])
